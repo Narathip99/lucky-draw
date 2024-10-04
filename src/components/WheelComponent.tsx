@@ -1,24 +1,36 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Wheel } from "@/types/wheel.interface";
+import { WheelComponentProps } from "@/types/WheelComponentProps.interface";
 import { Button } from "./ui/button";
 
-const WheelComponent: React.FC<Wheel> = ({
+const WheelComponent = ({
   segments,
   segColors,
   winningSegment,
   onFinished,
+  primaryColor = "black",
+  contrastColor = "white",
   isOnlyOnce = true,
   size = window.innerWidth,
   upDuration = 100,
   downDuration = 1000,
-  fontSize = "1px",
-}: Wheel) => {
-  const canvasId = useRef(`canvas-${Math.random().toString(36).substr(2, 8)}`);
-  const wheelId = useRef(`wheel-${Math.random().toString(36).substr(2, 8)}`);
+  fontFamily = "proxima-nova",
+  fontSize = "1em",
+}: WheelComponentProps) => {
+  const randomString = () => {
+    const chars =
+      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz".split("");
+    const length = 8;
+    let str = "";
+    for (let i = 0; i < length; i++) {
+      str += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return str;
+  };
+  const canvasId = useRef(`canvas-${randomString()}`);
+  const wheelId = useRef(`wheel-${randomString()}`);
   const dimension = (size + 20) * 2;
-
   let currentSegment = "";
-  const [isStarted, setIsStarted] = useState(false);
+  let isStarted = false;
   const [isFinished, setFinished] = useState(false);
   let timerHandle = 0;
   const timerDelay = segments.length;
@@ -32,7 +44,6 @@ const WheelComponent: React.FC<Wheel> = ({
   let frames = 0;
   const centerX = size + 20;
   const centerY = size + 20;
-
   useEffect(() => {
     wheelInit();
     setTimeout(() => {
@@ -57,12 +68,11 @@ const WheelComponent: React.FC<Wheel> = ({
       canvas.setAttribute("id", canvasId.current);
       document.getElementById(wheelId.current)?.appendChild(canvas);
     }
-    //canvas?.addEventListener("click", spin, false);
+    canvas?.addEventListener("click", spin, false);
     canvasContext = canvas?.getContext("2d");
   };
-
   const spin = () => {
-    setIsStarted(true);
+    isStarted = true;
     if (timerHandle === 0) {
       spinStart = new Date().getTime();
       maxSpeed = Math.PI / segments.length;
@@ -76,7 +86,6 @@ const WheelComponent: React.FC<Wheel> = ({
     const duration = new Date().getTime() - spinStart;
     let progress = 0;
     let finished = false;
-
     if (duration < upTime) {
       progress = duration / upTime;
       angleDelta = maxSpeed * Math.sin((progress * Math.PI) / 2);
@@ -108,10 +117,8 @@ const WheelComponent: React.FC<Wheel> = ({
       clearInterval(timerHandle);
       timerHandle = 0;
       angleDelta = 0;
-      setIsStarted(false);
     }
   };
-  console.log(isStarted);
 
   const wheelDraw = () => {
     clear();
@@ -143,8 +150,8 @@ const WheelComponent: React.FC<Wheel> = ({
     ctx.save();
     ctx.translate(centerX, centerY);
     ctx.rotate((lastAngle + angle) / 2);
-    ctx.fillStyle = "white";
-    ctx.font = `bold ${fontSize}`;
+    ctx.fillStyle = contrastColor;
+    ctx.font = `bold ${fontSize} ${fontFamily}`;
     ctx.fillText(value.substring(0, 21), size / 2 + 20, 0);
     ctx.restore();
   };
@@ -157,9 +164,11 @@ const WheelComponent: React.FC<Wheel> = ({
     let lastAngle = angleCurrent;
     const len = segments.length;
     const PI2 = Math.PI * 2;
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = primaryColor;
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
-    ctx.font = "16px Arial";
+    ctx.font = "1em " + fontFamily;
     for (let i = 1; i <= len; i++) {
       const angle = PI2 * (i / len) + angleCurrent;
       drawSegment(i - 1, lastAngle, angle);
@@ -188,8 +197,8 @@ const WheelComponent: React.FC<Wheel> = ({
     }
     const ctx = canvasContext;
     ctx.lineWidth = 1;
-    ctx.strokeStyle = "white";
-    ctx.fillStyle = "white";
+    ctx.strokeStyle = contrastColor;
+    ctx.fillStyle = contrastColor;
     ctx.beginPath();
 
     // วาดสามเหลี่ยมที่แหลมชี้ลง
@@ -199,7 +208,7 @@ const WheelComponent: React.FC<Wheel> = ({
     ctx.closePath();
     ctx.fill();
 
-    const change = angleCurrent + Math.PI / -2;
+    const change = angleCurrent - Math.PI / 2;
     let i =
       segments.length -
       Math.floor((change / (Math.PI * 2)) * segments.length) -
@@ -207,12 +216,9 @@ const WheelComponent: React.FC<Wheel> = ({
     if (i < 0) i = i + segments.length;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillStyle = "black";
+    ctx.fillStyle = primaryColor;
     ctx.font = "bold 1.5em ";
     currentSegment = segments[i];
-    //
-    isStarted &&
-      ctx.fillText(currentSegment, centerX + 10, centerY + size + 50);
   };
 
   const clear = () => {
@@ -226,7 +232,7 @@ const WheelComponent: React.FC<Wheel> = ({
   return (
     <div
       id={wheelId.current}
-      className="w-full flex flex-col justify-center items-center"
+      className="w-full flex flex-col justify-center items-center gap-8"
     >
       <canvas
         id={canvasId.current}
@@ -237,13 +243,12 @@ const WheelComponent: React.FC<Wheel> = ({
         }}
       />
       <Button
+        onClick={spin}
         variant="default"
         size="lg"
-        className="text-xl"
-        onClick={spin}
-        //disabled={isStarted || (isOnlyOnce && isFinished)}
+        className="text-xl font-bold"
       >
-        {isStarted ? "Spinning" : "Spin"}
+        Spinnn !
       </Button>
     </div>
   );
