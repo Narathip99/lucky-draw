@@ -1,64 +1,78 @@
-import React, { useState } from "react";
-// interface
+import { useState } from "react";
 import { Prize } from "@/types/prize.interface";
-// components
-import Wheel from "@/components/Wheel";
-import { Button } from "@/components/ui/button";
+import WheelComponent from "./components/WheelComponent";
 
-// prize
+// initial prizes
 const initialPrizes: Prize[] = [
-  { name: "Apple Watch", percentage: 5, count: 1 },
-  { name: "Vacuum Cleaner", percentage: 10, count: 2 },
-  { name: "Cash Prize", percentage: 20, count: Infinity },
-  { name: "Thank you 😊", percentage: 20, count: Infinity },
-  { name: "Thank you 🙏", percentage: 20, count: Infinity },
-  { name: "Thank you 😱", percentage: 15, count: Infinity },
-  { name: "Thank you 😂", percentage: 10, count: Infinity },
+  { name: "Apple Watch", count: 1 },
+  { name: "Vacuum Cleaner", count: 2 },
+  { name: "Cash Prize", count: Infinity },
+  { name: "Thank you 😊", count: Infinity },
+  { name: "Thank you 🙏", count: Infinity },
+  { name: "Thank you 😱", count: Infinity },
+  { name: "Thank you 😂", count: Infinity },
 ];
 
 function App() {
   const [prizes, setPrizes] = useState(initialPrizes);
-  const [rotation, setRotation] = useState(0);
-  const [spinning, setSpinning] = useState(false);
+  const [winner, setWinner] = useState("");
 
-  //
-  console.log(`${prizes.map((prize) => prize.count)} \n ${spinning}`);
+  const segments = prizes
+    .filter((prize) => prize.count > 0) // Filter out depleted prizes
+    .map((prize) => prize.name);
 
-  //
-  const spinWheel = () => {
-    if (spinning) return; // already spinning!!!
+  // segment colors
+  const segColors = [
+    "#EE4040",
+    "#F0CF50",
+    "#815CD1",
+    "#3DA5E0",
+    "#34A24F",
+    "#F9AA1F",
+    "#EC3F3F",
+    "#FF9000",
+    "#F9AA1F",
+  ];
 
-    // start spinning
-    setSpinning(true);
+  const updatePrizes = (winningSegment: string) => {
+    const updatedPrizes = prizes.map((prize) => {
+      if (prize.name === winningSegment && prize.count > 0) {
+        return { ...prize, count: prize.count - 1 };
+      }
+      return prize;
+    });
+    setPrizes(updatedPrizes);
+  };
 
-    // generate a random rotation (between 360 and 3600 degrees)
-    const randomRotation = Math.floor(Math.random() * 3600) + 360;
-
-    // set the new rotation
-    setRotation((prev) => prev + randomRotation);
-
-    // set timeout to stop spinning
-    setTimeout(() => {
-      setSpinning(false);
-    }, 5000);
+  const onFinished = (winningSegment: string) => {
+    const prize = prizes.find((prize) => prize.name === winningSegment);
+    if (prize && prize.count > 0) {
+      updatePrizes(winningSegment); // Update prize counts
+      setWinner(winningSegment); // Update winner state
+      console.log(`You won: ${winningSegment}`);
+    } else {
+      console.log("No more prizes left for this segment.");
+    }
   };
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center">
       <h1 className="text-3xl font-semibold">Which reward will you get?</h1>
-      <Wheel prizes={prizes} rotation={rotation} />
-      <Button
-        onClick={spinWheel}
-        variant="default"
-        size="lg"
-        className="text-xl"
-      >
-        Spin!
-      </Button>
+      {/* wheel */}
+      <WheelComponent
+        segments={segments}
+        segColors={segColors}
+        winningSegment={winner}
+        onFinished={onFinished}
+        isOnlyOnce={false}
+        size={200}
+        upDuration={300}
+        downDuration={300}
+      />
       <ul className="my-4">
         {prizes.slice(0, 3).map((prize) => (
           <li key={prize.name}>
-            {prize.name}: {prize.count}
+            {prize.name}: {prize.count === Infinity ? "Unlimited" : prize.count}
           </li>
         ))}
       </ul>
