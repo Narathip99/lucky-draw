@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { WheelComponentProps } from "@/types/WheelComponentProps.interface";
-import { Button } from "@/components/ui/button";
+import { WheelComponentProps } from "../types/WheelComponentProps.interface";
+import { Button } from "./ui/button";
 
 const WheelComponent: React.FC<WheelComponentProps> = ({
   segments,
