@@ -41,7 +41,7 @@ const WinnerModal: React.FC<WinnerModalProps> = ({
             />
             <p className="text-center text-white text-xl font-semibold">
               Congratulation! <br />
-              You Got{" "}
+              You Got
               {isCashPrize ? `${randomCashPrizeAmount} Baht` : winner.name}
             </p>
           </div>

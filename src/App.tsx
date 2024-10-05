@@ -34,14 +34,19 @@ function App() {
     .filter((prize) => prize.count > 0)
     .map((prize) => prize.name);
 
-  const segColors = prizes
+  const segColors: string[] = prizes
     .filter((prize) => prize.count > 0)
     .map((prize) => prize.color);
 
   // get the prize object from the wheel to display in the winner modal
   const onFinished = (winnerName: string) => {
+    //console.log("Winner Name:", winnerName);
     const winnerPrize = prizes.find((prize) => prize.name === winnerName);
-    if (!winnerPrize) return; // Early return if no winner
+
+    if (!winnerPrize) {
+      console.error("Error: Undefined Winner");
+      return;
+    }
 
     console.log("Winner Prize:", winnerPrize);
     setWinner(winnerPrize);
@@ -58,9 +63,11 @@ function App() {
   };
 
   // log quantity of each prize
+  /*
   console.log(
     prizes.map((prize) => `${prize.name}: ${prize.count}`).join("\n")
-  );
+  ); 
+  */
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center gap-8">
@@ -70,20 +77,16 @@ function App() {
         segments={segments}
         segColors={segColors}
         onFinished={(winnerName) => onFinished(winnerName)}
-        primaryColor="black"
-        contrastColor="white"
-        buttonText="Spin"
         isOnlyOnce={false}
         size={180}
         upDuration={100}
         downDuration={300}
-        fontFamily="Arial"
       />
 
       {/* Modal to show the winner */}
       <WinnerModal
         isVisible={isModalVisible}
-        onClose={() => setModalVisible(!isModalVisible)}
+        onClose={() => setModalVisible(false)}
         winner={winner}
       />
     </div>
