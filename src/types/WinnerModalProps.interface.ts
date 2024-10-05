@@ -3,7 +3,6 @@ export type WinnerModalProps = {
   onClose: () => void;
   winner: {
     name: string;
-    image: string;
-  };
-  isWon: boolean;
+    image: string | null;
+  } | null;
 };

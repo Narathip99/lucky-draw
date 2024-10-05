@@ -63,11 +63,9 @@ function App() {
   };
 
   // log quantity of each prize
-  /*
   console.log(
     prizes.map((prize) => `${prize.name}: ${prize.count}`).join("\n")
-  ); 
-  */
+  );
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center gap-8">

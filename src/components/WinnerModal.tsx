@@ -33,12 +33,15 @@ const WinnerModal: React.FC<WinnerModalProps> = ({
       <Card className="py-8 px-12 bg-red-800 flex flex-col items-center justify-center gap-4">
         {hasUserWonPrize ? (
           <div>
-            <img
-              src={winner.image}
-              alt={winner.name}
-              width="200"
-              height="200"
-            />
+            {winner.image && (
+              <img
+                src={winner.image}
+                alt={winner.name}
+                width="200"
+                height="200"
+              />
+            )}
+
             <p className="text-center text-white text-xl font-semibold">
               Congratulation! <br />
               You Got
