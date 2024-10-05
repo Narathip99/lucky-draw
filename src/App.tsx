@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Prize } from "./types/Prize.interface";
+import type { Prize } from "./types/Prize.interface";
 import WheelComponent from "./components/WheelComponent";
 import WinnerModal from "./components/WinnerModal";
 
