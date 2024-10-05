@@ -1,5 +1,4 @@
 import { useState } from "react";
-import type { Prize } from "./types/Prize.interface";
 import WheelComponent from "./components/WheelComponent";
 import WinnerModal from "./components/WinnerModal";
 
@@ -7,6 +6,13 @@ import WinnerModal from "./components/WinnerModal";
 import appleWatchIMG from "./assets/apple-watch.png";
 import vacuumCleanerIMG from "./assets/vacuum-cleaner.png";
 import moneyIMG from "./assets/money.png";
+
+interface Prize {
+  name: string;
+  count: number;
+  image: string | null;
+  color: string;
+}
 
 function App() {
   // initial prizes

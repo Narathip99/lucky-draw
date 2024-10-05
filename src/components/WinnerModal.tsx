@@ -1,7 +1,15 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { WinnerModalProps } from "../types/WinnerModalProps.interface";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
+
+type WinnerModalProps = {
+  isVisible: boolean;
+  onClose: () => void;
+  winner: {
+    name: string;
+    image: string | null;
+  } | null;
+};
 
 const WinnerModal: React.FC<WinnerModalProps> = ({
   isVisible = false,

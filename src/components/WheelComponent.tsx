@@ -1,6 +1,15 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { WheelComponentProps } from "../types/WheelComponentProps.interface";
 import { Button } from "./ui/button";
+
+interface WheelComponentProps {
+  segments: string[];
+  segColors: string[];
+  onFinished: (segment: string) => void;
+  isOnlyOnce?: boolean;
+  size?: number;
+  upDuration?: number;
+  downDuration?: number;
+}
 
 const WheelComponent: React.FC<WheelComponentProps> = ({
   segments,
